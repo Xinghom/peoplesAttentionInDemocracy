@@ -1,4 +1,5 @@
 import sys
+import csv
 
 def getYear(line):
     # print(len(line))
@@ -18,8 +19,24 @@ def getNum(line):
     index = line.find(",")
     return line[index+1:]
 
+def csvGenerate(table, keyword,language):
+    csvFileName = keyword + "_" + language + ".csv"
+    with open(csvFileName, "w") as csvfile:
+        writer = csv.writer(csvfile)
+        #columns_name
+        writer.writerow(["year","booksNum"])
+        list = sorted(table.keys())
+        for i in list:
+            print(i,table[i])
+            writer.writerow([i,table[i]])
+
+
+
 if __name__ == '__main__':
     keyword = sys.argv[1] + "_NOUN"
+    language = sys.argv[2]
+    data_path = sys.argv[3]
+
     table = {}
     year_lower_bound = 1800
     year_upper_bound = 1810
@@ -27,11 +44,8 @@ if __name__ == '__main__':
     for i in range((2010 - 1800) / 10):
         table[year_lower_bound] = 0
         year_lower_bound += 10
-        sorted(table.keys())
 
-    nums = []
-
-    file_object = open("../data/Chinese/googlebooks-chi-sim-all-1gram-20120701-g", "rU")
+    file_object = open(data_path, "rU")
     for i, line in enumerate(file_object):
         # print(line)
         if keyword in line:
@@ -41,7 +55,8 @@ if __name__ == '__main__':
             if year_round in table:
                 num = table[year_round] + num_year
                 table[year_round] = num
-                print(year_round, num)
+                # print(year_round, num)
 
-    
+    csvGenerate(table,keyword,language)
+    print("done")
 
