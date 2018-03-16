@@ -48,7 +48,7 @@ if __name__ == '__main__':
     file_object = open(data_path, "rU")
     for i, line in enumerate(file_object):
         # print(line)
-        if keyword in line:
+        if keyword in line and line.find(keyword) == 0:
             year = getYear(line)
             num_year = int(getNum(line))
             year_round = int(int(year) / 10) * 10
