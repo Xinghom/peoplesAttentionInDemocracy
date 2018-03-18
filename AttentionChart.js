@@ -1,11 +1,12 @@
 var margin = {top: 20, right: 200, bottom: 100, left: 50},
     width = 960 - margin.left - margin.right,
     height = 500 - margin.top - margin.bottom;
-    
+
 var svg = d3.select("svg")
-            .attr("margin", "auto")
-            .attr("width", width)
-            .attr("height", height);
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom) //height + margin.top + margin.bottom
+  .append("g")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
 var parseDate = d3.timeParse("%Y");
 
@@ -23,11 +24,7 @@ var line = d3.line()
     .y(function(d) { return yScale(d.number); })
     .defined(function(d) { return d.number; });  // Hiding line value defaults of 0 for missing data
 
-var svg = d3.select("body").append("svg")
-    .attr("width", width + margin.left + margin.right)
-    .attr("height", height + margin.top + margin.bottom) //height + margin.top + margin.bottom
-  .append("g")
-    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
 
 // Create invisible rect for mouse tracking
 svg.append("rect")
@@ -45,7 +42,6 @@ svg.append("rect")
 // brush
 // rightside information display
 
-// 干巴爹！
 
 d3.csv("usEng.csv", function(error, data) { 
         if (error) throw error; 
