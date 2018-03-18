@@ -13,17 +13,26 @@ def getInf(line,table, language):
         endTail = line.find("\t")
         currBook = line[0: endTail]
 
-        roundYear = int(currYear / 10) * 10
+        roundYear = int(int(currYear) / 10) * 10
         if roundYear in table.keys():
-
-
+            num = table[roundYear][language] + int(currBook)
+            table[roundYear][language] = num
 
         line = line[endTail:]
         index = 0
-        print(currYear, currBook)
+        # print(currYear, currBook)
+    print(table)
 
-
-
+def csvGenerate(table):
+    csvFileName = "totalBooksNum.csv"
+    with open(csvFileName, "w") as csvfile:
+        writer = csv.writer(csvfile)
+        #columns_name
+        writer.writerow(["year","usEnglish","Chinese","Hebrew","Russian","Spanish"])
+        list = sorted(table.keys())
+        for i in list:
+            print(i,table[i])
+            writer.writerow([i,table[i][0],table[i][1],table[i][2],table[i][3],table[i][4]])
 
 
 
@@ -42,21 +51,13 @@ if __name__ == '__main__':
     year_lower_bound = 1800
     table = {}
     for i in range(1800,2010,10):
-        table[i] = []
-
-    t = "	2007,826433846,6121305,7291	2008,752279725,5463702,6436	2009,442976761,2460245,2557	"
-    print(len(t))
-    print(t, "text")
+        table[i] = [0,0,0,0,0]
+        # print(type(table[i]))
 
     for i, file in enumerate(list):
         for line in file:
             index = line.find("\t")
             getInf(line, table, i)
-    #
-    #         roundYear = int(currYear / 10) * 10
-    #         if roundYear in table.keys():
-    #             # table[roundYear] = table[roundYear] + int(currBook)
-    #             # print(roundYear, table[roundYear])
-    #
-    # csvGenerate()
+
+    csvGenerate(table)
     print("===== We Good =====")
