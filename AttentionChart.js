@@ -16,23 +16,31 @@ var show_number = true;
 var maxY;
 
 //define scales
-var x = d3.scaleTime().range([0, width / 10 * 8]),
+var x = d3.scaleTime().range([0, width]),
+    x_bar = d3.scaleBand().rangeRound([width / 10 * 8 + 10, width]).padding(0.3).align(0.3),
     y = d3.scaleLinear().range([height - 50, 50]),
+    y_bar = d3.scaleLinear().range([height - 50, 50]),
     y_percent = d3.scaleLinear().range([height - 50, 50]),
 
     //color scale
-    z = d3.scaleOrdinal(d3.schemeCategory20);
+    z_bar = d3.scaleOrdinal(d3.schemeCategory10);
+
+var stack = d3.stack();
+//define Tooltip
+var div = d3.select("body").append("toolTip")
+        .attr("class", "tooltip")
+        .style("opacity", 0);
 
 //define line generator
 var line = d3.line()
-    .curve(d3.curveBasis)//interpolated using curveBasis: smooth
+    .curve(d3.curveBasis)//interpolated using curveBagit sis: smooth
     .x(function(d) { return x(d.year); })
     .y(function(d) { return y(d.number); });
 
 var line_percent = d3.line()
-    .curve(d3.curBasis)
+    .curve(d3.curveBasis)
     .x(function(d){ return x(d.year)})
-    .y(function(d) {return y(d.number/d.sum)});
+    .y(function(d) {return y_percent(d.number/d.sum)});
 
 var select_lang = [true,true,true,true,true];
 
@@ -187,6 +195,7 @@ function printPath_Eng(data) {
             .attr("class", "usEng");
     line_usEng.append("path")
             .attr("class", "line")
+            .style("opacity", 0)
             .attr("d", function(d) {
                 if (d.id == "average") {
                     if (show_number) {
@@ -197,7 +206,31 @@ function printPath_Eng(data) {
                 }
             })
             .attr("clip-path", "url(#clip)")
-            .style("stroke", usBlue);
+            .style("stroke", usBlue)
+            .transition()
+            .duration(500)
+            .style("opacity",0.8);
+    
+    line_usEng.on("mouseover", function(d) {
+                line_usEng.style("opacity",1)
+                    .style("stroke-width","6px");
+                div.transition()
+                    .duration(200)
+                    .style("opacity", 0.9);
+                div.html(
+                        d.language + "<br/>" + "Num. of Books " + d.number
+                        + "<br/>" + "% in the year" + d.number/d.sum + "%"
+                        )
+                        .style("left", (d3.event.pageX + 30) + "px")
+                        .style("top", (d3.event.pageY - 28) + "px");
+            })
+            .on("mouseout", function(d) {
+               line_usEng.style("opacity",0.8)
+                    .style("stroke-width","6px");
+               div.transition()
+                 .duration(500)
+                 .style("opacity", 0);
+               });
 }
 
 function printPath_Chinese(data) {
@@ -208,6 +241,7 @@ function printPath_Chinese(data) {
             .attr("class", "Chinese");
     line_Chinese.append("path")
             .attr("class", "line")
+            .style("opacity", 0)
             .attr("d", function(d) {
                 if (d.id == "average") {
                     if (show_number) {
@@ -218,7 +252,26 @@ function printPath_Chinese(data) {
                 }
             })
             .attr("clip-path", "url(#clip)")
-            .style("stroke", chiRed);
+            .style("stroke", chiRed)
+            .transition()
+            .duration(500)
+            .style("opacity",1);
+    line_Chinese.on("mouseover", function(d) {
+                div.transition()
+                    .duration(200)
+                    .style("opacity", 0.9);
+                div.html(
+                        d.language + "<br/>" + "Num. of Books " + d.number
+                        + "<br/>" + "% in the year" + d.number/d.sum + "%"
+                        )
+                        .style("left", (d3.event.pageX + 30) + "px")
+                        .style("top", (d3.event.pageY - 28) + "px");
+            })
+            .on("mouseout", function(d) {
+               div.transition()
+                 .duration(500)
+                 .style("opacity", 0);
+               })
 }
 function printPath_Hebrew(data) {
     var line_Hebrew = g.selectAll(".Hebrew")
@@ -228,6 +281,7 @@ function printPath_Hebrew(data) {
             .attr("class", "Hebrew");
     line_Hebrew.append("path")
             .attr("class", "line")
+            .style("opacity",0)
             .attr("d", function(d) {
                 if (d.id == "average") {
                     if (show_number) {
@@ -238,7 +292,26 @@ function printPath_Hebrew(data) {
                 }
             })
             .attr("clip-path", "url(#clip)")
-            .style("stroke", hebGreen);
+            .style("stroke", hebGreen)
+            .transition()
+            .duration(500)
+            .style("opacity",1);
+    line_Hebrew.on("mouseover", function(d) {
+                div.transition()
+                    .duration(200)
+                    .style("opacity", 0.9);
+                div.html(
+                        d.language + "<br/>" + "Num. of Books " + d.number
+                        + "<br/>" + "% in the year" + d.number/d.sum + "%"
+                        )
+                        .style("left", (d3.event.pageX + 30) + "px")
+                        .style("top", (d3.event.pageY - 28) + "px");
+            })
+            .on("mouseout", function(d) {
+               div.transition()
+                 .duration(500)
+                 .style("opacity", 0);
+               });
 }
 function printPath_Russian(data) {
     var line_Russian = g.selectAll(".Russian")
@@ -248,6 +321,7 @@ function printPath_Russian(data) {
             .attr("class", "Russian");
     line_Russian.append("path")
             .attr("class", "line")
+            .style("opacity",0)
             .attr("d", function(d) {
                 if (d.id == "average") {
                     if (show_number) {
@@ -258,7 +332,26 @@ function printPath_Russian(data) {
                 }
             })
             .attr("clip-path", "url(#clip)")
-            .style("stroke", rusDarkBlue);
+            .style("stroke", rusDarkBlue)
+            .transition()
+            .duration(500)
+            .style("opacity",1);
+    line_Russian.on("mouseover", function(d) {
+                div.transition()
+                    .duration(200)
+                    .style("opacity", 0.9);
+                div.html(
+                        d.language + "<br/>" + "Num. of Books " + d.values
+                        + "<br/>" + "% in the year" + d.number/d.sum + "%"
+                        )
+                        .style("left", (d3.event.pageX + 30) + "px")
+                        .style("top", (d3.event.pageY - 28) + "px");
+            })
+            .on("mouseout", function(d) {
+               div.transition()
+                 .duration(500)
+                 .style("opacity", 0);
+               });
 }
 function printPath_Spanish(data) {
     var line_Spanish = g.selectAll(".Spanish")
@@ -268,6 +361,7 @@ function printPath_Spanish(data) {
             .attr("class", "Spanish");
     line_Spanish.append("path")
             .attr("class", "line")
+            .style("opacity",0)
             .attr("d", function(d) {
                 if (d.id == "average") {
                     if (show_number) {
@@ -278,7 +372,26 @@ function printPath_Spanish(data) {
                 }
             })
             .attr("clip-path", "url(#clip)")
-            .style("stroke", spaYellow);
+            .style("stroke", spaYellow)
+            .transition()
+            .duration(500)
+            .style("opacity",1);
+    line_Spanish.on("mouseover", function(d) {
+                div.transition()
+                    .duration(200)
+                    .style("opacity", 0.9);
+                div.html(
+                        d.language + "<br/>" + "Num. of Books " + d.number
+                        + "<br/>" + "% in the year" + d.number/d.sum + "%"
+                        )
+                        .style("left", (d3.event.pageX + 30) + "px")
+                        .style("top", (d3.event.pageY - 28) + "px");
+            })
+            .on("mouseout", function(d) {
+               div.transition()
+                 .duration(500)
+                 .style("opacity", 0);
+               });
 }
 
 function removePath(name) {
@@ -286,7 +399,30 @@ function removePath(name) {
     line.remove();
 }
 
+//move the Y axis to close to the chart
+function move_percent(){
+       g.selectAll(".axis-y")
+        .attr("transform", "translate(" + (show_number ? "0" : "-80") + ", 0)")
+        .style("opacity", show_number ? 1 : 0.2);
+       g.selectAll("#rightText")
+        .attr("y", show_number ? -75 : -150);
+       g.selectAll("#rightRect")
+        .attr("y", show_number ? -75: - 150);
 
+       g.selectAll(".axis-y-percent")
+        .transition()
+        .duration(500)
+        .attr("transform", "translate(" + (show_number ? "-90" : "0") + ", 0)" )
+        .style("opacity", show_number ? 0.2 : 1);
+       g.selectAll("#percentText")
+        .transition()
+        .duration(500)
+        .attr("y", show_number ? -145 : -65);
+       g.selectAll("#percentRect")
+        .transition()
+        .duration(500)
+        .attr("y", show_number ? -145: - 65);
+}
 
 
 //======================= load data ===========================
@@ -299,7 +435,8 @@ d3.queue()
     .await(function(error, usEng_data, chi_data, heb_data, rus_data, spa_data) {
         if (error) {console.error("csv reading error: " + error)}
     var list = [usEng_data, chi_data, heb_data, rus_data, spa_data];
-
+    
+    
     list.forEach(function(language) {
         //console.table(language);
         language.forEach(function(d) {
@@ -310,56 +447,58 @@ d3.queue()
     
     var words_usEng = list[0].columns.slice(1,10).map(function(id) {
         return {
+          language: "AmericanEnglish",
           id: (id === "total" ? "average" : id),
           values: (id === "total" ? list[0].map(function(d) {
-                return {year: d.year, number: d[id]/8, sum: +d.sum}; }) : list[0].map(function(d) {
-              return {year: d.year, number:d[id], sum: +d.sum};
+                return {language: "AmericanEnglish", year: d.year, number: d[id]/8, sum: +d.sum}; }) : list[0].map(function(d) {
+              return {language: "AmericanEnglish", year: d.year, number:d[id], sum: +d.sum};
           }))
-//          visible: (id === "total" ? true : false)
         }
     });
-    console.log(words_usEng);
+    console.log(words_usEng.values);
     var words_chi = list[1].columns.slice(1,10).map(function(id) {
         return {
+          language: "Chinese",
           id: (id === "total" ? "average" : id),
           values: (id === "total" ? list[1].map(function(d) {
-                return {year: d.year, number: d[id]/8, sum: +d.sum}; }) : list[1].map(function(d) {
-              return {year: d.year, number:d[id], sum: +d.sum};
+                return {language: "Chinese", year: d.year, number: d[id]/8, sum: +d.sum}; }) : list[1].map(function(d) {
+              return {language: "Chinese", year: d.year, number:d[id], sum: +d.sum};
           }))
-//          visible: (id === "total" ? true : false)
         }
     });
     var words_heb = list[2].columns.slice(1,10).map(function(id) {
         return {
+          language: "Hebrew",
           id: (id === "total" ? "average" : id),
           values: (id === "total" ? list[2].map(function(d) {
-                return {year: d.year, number: d[id]/8, sum: +d.sum}; }) : list[2].map(function(d) {
-              return {year: d.year, number:d[id], sum: +d.sum};
+                return {language: "Hebrew", year: d.year, number: d[id]/8, sum: +d.sum}; }) : list[2].map(function(d) {
+              return {language: "Hebrew", year: d.year, number:d[id], sum: +d.sum};
           }))
-//          visible: (id === "total" ? true : false)
         }
     });
     var words_rus = list[3].columns.slice(1,10).map(function(id) {
         return {
+          language: "Russian",
           id: (id === "total" ? "average" : id),
           values: (id === "total" ? list[3].map(function(d) {
-                return {year: d.year, number: d[id]/8, sum: +d.sum}; }) : list[3].map(function(d) {
-              return {year: d.year, number:d[id], sum: +d.sum};
+                return {language: "Russian", year: d.year, number: d[id]/8, sum: +d.sum}; }) : list[3].map(function(d) {
+              return {language: "Russian", year: d.year, number:d[id], sum: +d.sum};
           }))
-//          visible: (id === "total" ? true : false)
         }
     });
     var words_spa = list[4].columns.slice(1,10).map(function(id) {
         return {
+          language: "Russian",
           id: (id === "total" ? "average" : id),
           values: (id === "total" ? list[4].map(function(d) {
-                return {year: d.year, number: d[id]/8, sum: +d.sum}; }) : list[4].map(function(d) {
-              return {year: d.year, number:d[id], sum: +d.sum};
+                return {language: "Spanish", year: d.year, number: d[id]/8, sum: +d.sum}; }) : list[4].map(function(d) {
+              return {language: "Spanish", year: d.year, number:d[id], sum: +d.sum};
           }))
-//          visible: (id === "total" ? true : false)
         }
     });
     var list_lang = [words_usEng, words_chi, words_heb, words_rus, words_spa];
+    
+    
     
     var array_maxNumsOfList = [];
     list_lang.forEach(function(lang_words) {
@@ -387,9 +526,6 @@ d3.queue()
         0,
         d3.max(array_maxPercentOfList)
     ]);
-
-    //define color scale
-    z.domain(list_lang.map(function(c) { return c.id; }));
 
     
     //append x axis
@@ -446,10 +582,19 @@ d3.queue()
             }
         )
         .on("click", function() {
-            show_number = !show_number;
-            if(show_number === true){
-                draw_line();
-            }
+            show_number = true;
+            move_percent();
+            removePath("usEng");
+            removePath("Chinese");
+            removePath("Hebrew");
+            removePath("Russian");
+            removePath("Spanish");
+        
+            printPath_Eng(words_usEng);
+            printPath_Chinese(words_chi);
+            printPath_Hebrew(words_heb);
+            printPath_Russian(words_rus);
+            printPath_Spanish(words_spa);      
          })
         .transition()
         .duration(500)
@@ -466,7 +611,7 @@ d3.queue()
         .style("opacity", 0)
         .transition()
         .duration(500)
-        .style("opacity", 1);
+        .style("opacity", 0.2);
     
     
         
@@ -508,7 +653,19 @@ d3.queue()
             }
         )
         .on("click", function() {
-            show_number = !show_number;
+            show_number = false;
+            move_percent();
+            removePath("usEng");
+            removePath("Chinese");
+            removePath("Hebrew");
+            removePath("Russian");
+            removePath("Spanish");
+            
+            printPath_Eng(words_usEng);
+            printPath_Chinese(words_chi);
+            printPath_Hebrew(words_heb);
+            printPath_Russian(words_rus);
+            printPath_Spanish(words_spa);
          })
         .transition()
         .duration(500)
@@ -566,6 +723,8 @@ d3.queue()
             select_lang[4] = !select_lang[4];
         });
 });
+
+
 
 //bind with multiseries data
 function type(d, _, columns) {
