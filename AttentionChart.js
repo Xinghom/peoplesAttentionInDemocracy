@@ -223,10 +223,113 @@ g.append("rect")
             }
         });
 // =====================================//
+//============ printPath ================//
+function printPath_Eng(data) {
+    var line_usEng = g.selectAll(".usEng")
+            .data(data)
+            .enter()
+            .append("g")
+            .attr("class", "usEng");
+    line_usEng.append("path")
+            .attr("class", "line")
+            .attr("d", function(d) {
+                if (d.id == "average") {
+                    if (show_number) {
+                        return line(d.values);
+                    } else {
+                        return line_percent(d.values);
+                    }
+                }
+            })
+            .attr("clip-path", "url(#clip)")
+            .style("stroke", usBlue);
+}
+
+function printPath_Chinese(data) {
+    var line_Chinese = g.selectAll(".Chinese")
+            .data(data)
+            .enter()
+            .append("g")
+            .attr("class", "Chinese");
+    line_Chinese.append("path")
+            .attr("class", "line")
+            .attr("d", function(d) {
+                if (d.id == "average") {
+                    if (show_number) {
+                        return line(d.values);
+                    } else {
+                        return line_percent(d.values);
+                    }
+                }
+            })
+            .attr("clip-path", "url(#clip)")
+            .style("stroke", chiRed);
+}
+function printPath_Hebrew(data) {
+    var line_Hebrew = g.selectAll(".Hebrew")
+            .data(data)
+            .enter()
+            .append("g")
+            .attr("class", "Hebrew");
+    line_Hebrew.append("path")
+            .attr("class", "line")
+            .attr("d", function(d) {
+                if (d.id == "average") {
+                    if (show_number) {
+                        return line(d.values);
+                    } else {
+                        return line_percent(d.values);
+                    }
+                }
+            })
+            .attr("clip-path", "url(#clip)")
+            .style("stroke", hebGreen);
+}
+function printPath_Russian(data) {
+    var line_Russian = g.selectAll(".Russian")
+            .data(data)
+            .enter()
+            .append("g")
+            .attr("class", "Russian");
+    line_Russian.append("path")
+            .attr("class", "line")
+            .attr("d", function(d) {
+                if (d.id == "average") {
+                    if (show_number) {
+                        return line(d.values);
+                    } else {
+                        return line_percent(d.values);
+                    }
+                }
+            })
+            .attr("clip-path", "url(#clip)")
+            .style("stroke", rusDarkBlue);
+}
+function printPath_Spanish(data) {
+    var line_Spanish = g.selectAll(".Spanish")
+            .data(data)
+            .enter()
+            .append("g")
+            .attr("class", "Spanish");
+    line_Spanish.append("path")
+            .attr("class", "line")
+            .attr("d", function(d) {
+                if (d.id == "average") {
+                    if (show_number) {
+                        return line(d.values);
+                    } else {
+                        return line_percent(d.values);
+                    }
+                }
+            })
+            .attr("clip-path", "url(#clip)")
+            .style("stroke", spaYellow);
+}
 
 
 
 
+//======================= load data ===========================
 d3.queue()
     .defer(d3.csv, "usEng.csv", type)
     .defer(d3.csv, "Chinese.csv", type)
@@ -240,7 +343,7 @@ d3.queue()
     list.forEach(function(language) {
         //console.table(language);
         language.forEach(function(d) {
-            d.data = parseDate(d.year);
+            d.date = parseDate(d.year);
             d.sum = + d.all;
         });
     });
@@ -251,18 +354,19 @@ d3.queue()
           values: (id === "total" ? list[0].map(function(d) {
                 return {year: d.year, number: d[id]/8, sum: +d.sum}; }) : list[0].map(function(d) {
               return {year: d.year, number:d[id], sum: +d.sum};
-          })),
-          visible: (id === "total" ? true : false)
+          }))
+//          visible: (id === "total" ? true : false)
         }
     });
+    console.log(words_usEng);
     var words_chi = list[1].columns.slice(1,10).map(function(id) {
         return {
           id: (id === "total" ? "average" : id),
           values: (id === "total" ? list[1].map(function(d) {
                 return {year: d.year, number: d[id]/8, sum: +d.sum}; }) : list[1].map(function(d) {
               return {year: d.year, number:d[id], sum: +d.sum};
-          })),
-          visible: (id === "total" ? true : false)
+          }))
+//          visible: (id === "total" ? true : false)
         }
     });
     var words_heb = list[2].columns.slice(1,10).map(function(id) {
@@ -271,8 +375,8 @@ d3.queue()
           values: (id === "total" ? list[2].map(function(d) {
                 return {year: d.year, number: d[id]/8, sum: +d.sum}; }) : list[2].map(function(d) {
               return {year: d.year, number:d[id], sum: +d.sum};
-          })),
-          visible: (id === "total" ? true : false)
+          }))
+//          visible: (id === "total" ? true : false)
         }
     });
     var words_rus = list[3].columns.slice(1,10).map(function(id) {
@@ -281,8 +385,8 @@ d3.queue()
           values: (id === "total" ? list[3].map(function(d) {
                 return {year: d.year, number: d[id]/8, sum: +d.sum}; }) : list[3].map(function(d) {
               return {year: d.year, number:d[id], sum: +d.sum};
-          })),
-          visible: (id === "total" ? true : false)
+          }))
+//          visible: (id === "total" ? true : false)
         }
     });
     var words_spa = list[4].columns.slice(1,10).map(function(id) {
@@ -291,8 +395,8 @@ d3.queue()
           values: (id === "total" ? list[4].map(function(d) {
                 return {year: d.year, number: d[id]/8, sum: +d.sum}; }) : list[4].map(function(d) {
               return {year: d.year, number:d[id], sum: +d.sum};
-          })),
-          visible: (id === "total" ? true : false)
+          }))
+//          visible: (id === "total" ? true : false)
         }
     });
     var list_lang = [words_usEng, words_chi, words_heb, words_rus, words_spa];
@@ -310,7 +414,7 @@ d3.queue()
         array_maxPercentOfList.push(temp);
     });
     console.log(array_maxPercentOfList);
-//    console.log(array_maxNumsOfList);
+    console.log(array_maxNumsOfList);
     
     //define x axis
     x.domain(d3.extent(usEng_data, function(d) { return d.year; }));
@@ -445,243 +549,18 @@ d3.queue()
         )
         .on("click", function() {
             show_number = !show_number;
-                draw_line();
          })
         .transition()
         .duration(500)
         .style("opacity",1);
         
-    var line_usEng = g.selectAll(".word")
-            .data(words_usEng)
-            .enter()
-            .append("g")
-            .attr("class", "word");
-        
-    var line_Chinese = g.selectAll(".word")
-            .data(words_chi)
-            .enter()
-            .append("g")
-            .attr("class", "word");
-        
-    var line_Hebrew = g.selectAll(".word")
-            .data(words_heb)
-            .enter()
-            .append("g")
-            .attr("class", "word");
-        
-    var line_Rus = g.selectAll(".word")
-            .data(words_rus)
-            .enter()
-            .append("g")
-            .attr("class", "word");
-        
-    var line_Spa = g.selectAll(".word")
-            .data(words_spa)
-            .enter()
-            .append("g")
-            .attr("class", "word");
-    
-    var visible_state = [{line_usEng: select_lang[0]},
-                        {line_Chinese: select_lang[1]},
-                        {line_Hebrew: select_lang[2]},
-                        {line_Rus: select_lang[3]},
-                        {line_Spa: select_lang[4]}];
-    
-    function draw_line(){
-        //create line
-        for (var key in visible_state) {
-            if (visible_state[key] == 1){
-               key.append("path")
-                  .attr("class", "line")
-                  .style("pointer-events", "none") // Stop line interferring with cursor
-                  .attr("d", function(d) { 
-                    return show_number ? line(d.values) : line_percent(d.values); // If array key "visible" = true then draw line, if not then don't 
-                  })
-                 .attr("clip-path", "url(#clip)")//use clip path to make irrelevant part invisible
-                 .style("stroke", chiRed);
-//                 .style("stroke", function(d) { return z(d.id); });
-            }
-        }
-        
-    }
+        printPath_Eng(words_usEng);
+        printPath_Chinese(words_chi);
+        printPath_Hebrew(words_heb);
+        printPath_Russian(words_rus);
+        printPath_Spanish(words_spa);
 
-    
-//    //**************************//
-//    //append x axis
-//    g.append("g")
-//        .attr("class", "axis axis-x")
-//        .attr("transform", "translate(0," + height + ")")
-//        .call(d3.axisBottom(x));
-//
-//    //append y axis
-//    g.append("g")
-//        .attr("class", "axis axis-y")
-//        .call(d3.axisLeft(y))
-//        .append("text")
-//        .attr("transform", "rotate(-90)")
-//        .attr("y", -90)
-//        .attr("x", -125)
-//        .attr("dy", "0.9em")
-//        .attr("fill", "#000")
-//        .text("Volume of Books");
-//
-//    //append data to svg
-//    var Trend_usEng = g.selectAll(".language")
-//        .data(words_usEng)
-//        .enter()
-//        .append("g")
-//        .attr("class", "language");
-//    var Trend_chi = g.selectAll(".language")
-//        .data(words_chi)
-//        .enter()
-//        .append("g")
-//        .attr("class", "language");
-//    var Trend_heb = g.selectAll(".language")
-//        .data(words_heb)
-//        .enter()
-//        .append("g")
-//        .attr("class", "language");
-//    var Trend_rus = g.selectAll(".language")
-//        .data(words_rus)
-//        .enter()
-//        .append("g")
-//        .attr("class", "language");
-//    var Trend_spa = g.selectAll(".language")
-//        .data(words_spa)
-//        .enter()
-//        .append("g")
-//        .attr("class", "language");
-//
-//    //append Trend path to svg with animation
-//    Trend_usEng.append("path")
-//      .attr("class", "line")
-//      .style("pointer-events", "none") // Stop line interferring with cursor
-//      .attr("id", function(d) {
-//        return "line-" + d.id; // Give line id of line-(insert issue name, with any spaces replaced with no spaces)
-//      })
-//      .attr("d", function(d) {
-//        console.log(d);
-//        var Opacity = d.visible ? 1 : 0;
-//        d3.select("#line-"+d.id).style("opacity", Opacity);  
-//        return line(d.values); // If array key "visible" = true then draw line, if not then don't 
-//        })
-//      .style("stroke", function(d) { return z(d.id); });
 });
-
-////load data
-//var data = d3.csv("usEng.csv", type, function(error, data) {
-//    if(error) throw error;
-//    data.forEach(function(d) { // Make every date in the csv data a javascript date object format
-//      d.date = parseDate(d.year);
-//      d.sum = + d.all;
-//    });
-//    //parse data
-//    var words = data.columns.slice(1,10).map(function(id) {
-//        return {
-//            id: id,
-//            values: data.map(function(d) {
-//                return {year: d.year, number: d[id], sum: +d.sum};
-//            }),
-//            visible: (id === "total" ? true : false) // "visible": all false except for total which is true.    
-//        };
-//    });
-//    console.log(words)
-//
-//    //define x axis
-//    x.domain(d3.extent(data, function(d) { return d.year; }));
-//
-//    //define y axis
-//    y.domain([
-//        d3.min(words, function(c) { return d3.min(c.values, function (d) { return d.number; }); }),
-//        d3.max(words, function(c) { return d3.max(c.values, function(d) { return d.number; }); })
-//    ]);
-//
-//    //define color scale
-//    z.domain(words.map(function(c) { return c.id; }));
-//
-//    
-//    //append x axis
-//    g.append("g")
-//        .attr("class", "axis axis-x")
-//        .attr("transform", "translate(0," + height + ")")
-//        .call(d3.axisBottom(x));
-//
-//    //append y axis
-//    g.append("g")
-//        .attr("class", "axis axis-y")
-//        .call(d3.axisLeft(y))
-//        .append("text")
-//        .attr("transform", "rotate(-90)")
-//        .attr("y", -90)
-//        .attr("x", -125)
-//        .attr("dy", "0.9em")
-//        .attr("fill", "#000")
-//        .text("Volume of Books");
-//
-//    //append word data to svg
-//    var word = g.selectAll(".word")
-//        .data(words)
-//        .enter()
-//        .append("g")
-//        .attr("class", "word");
-//
-//
-//    //append word path to svg with animation
-//    word.append("path")
-//      .attr("class", "line")
-//      .style("pointer-events", "none") // Stop line interferring with cursor
-//      .attr("id", function(d) {
-//        return "line-" + d.id; // Give line id of line-(insert issue name, with any spaces replaced with no spaces)
-//      })
-//      .attr("d", function(d) { 
-//        var Opacity = d.visible ? 1 : 0;
-//        d3.select("#line-"+d.id).style("opacity", Opacity);  
-//        return line(d.values); // If array key "visible" = true then draw line, if not then don't 
-//    })
-//      .attr("clip-path", "url(#clip)")//use clip path to make irrelevant part invisible
-//      .style("stroke", function(d) { return z(d.id); });
-//
-//      var legendSpace = 600 / words.length; // 450/number of issues (ex. 40)  
-//    
-//      word.append("rect")
-//      .attr("width", 10)
-//      .attr("height", 10)                                    
-//      .attr("y", (margin.right/3) - 50) 
-//      .attr("x", function (d, i) { return (legendSpace)+i*(legendSpace); })  // spacing
-//      .attr("fill",function(d) {
-//        return d.visible ? z(d.id) : "#F1F1F2"; // If array key "visible" = true then color rect, if not then make it grey 
-//      })
-//      .attr("class", "legend-box")
-//    
-//    
-//      .on("click", function(d){ // On click make d.visible 
-//        d.visible = !d.visible; // If array key for this data selection is "visible" = true then make it false, if false then make it true
-//        
-//        maxY = findMaxY(words); // Find max Y rating value categories data with "visible"; true
-//        y.domain([0,maxY]); // Redefine yAxis domain based on highest y value of categories data with "visible"; true
-//        
-//        svg.select("axis-y")
-//          .transition()
-//          .call(d3.axisLeft(y))
-//        		  
-//        var newOpacity = d.visible ? 1 : 0;
-//        d3.select("#line-"+d.id).style("opacity", newOpacity);
-//       
-//        word.select("rect")
-//          .transition()
-//          .attr("fill", function(d) {
-//          return d.visible ? z(d.id) : "#F1F1F2";
-//        });
-//    
-//          
-//      })
-//          
-//      word.append("text")
-//      .attr("y", (margin.right/3) - 55) 
-//      .attr("x", function (d, i) { return (legendSpace)+i*(legendSpace); })  // (return (11.25/2 =) 5.625) + i * (5.625) 
-//      .text(function(d) { return d.id; }); 
-//
-//});
 
 //bind with multiseries data
 function type(d, _, columns) {
@@ -705,7 +584,7 @@ function findMaxY(data){  // Define function "findMaxY"
 
 function findMaxFromLanguageTable(data) {
     var maxValues = data.map(function(d) {
-        if (d.visible){
+        if(d.id == "average") {
             return d3.max(d.values, function(value) {
                 return value.number;
             });
@@ -716,11 +595,9 @@ function findMaxFromLanguageTable(data) {
 
 function findMaxPercent(data) {
     var maxValues = data.map(function(d) {
-        if (d.visible){
             return d3.max(d.values, function(value) {
                 return value.number / value.sum;
             });
-        }
     });
     return d3.max(maxValues); 
 }
