@@ -2,6 +2,6 @@
 
 .line {
     fill: none;
-    stroke: teal;
-    shape-rendering: crispEdges;
+    stroke-width: 4px;
+    shape-rendering: geometricPrecision;
 }

@@ -8,7 +8,7 @@ var margin = {top: 100, right: 80, bottom: 40, left: 150},
     g = svg.append("g").attr("transform", "translate(" + margin.left + "," +margin.top + ")");
 
 //color Def
-var usBlue = "#2222ff", chiRed = "#ee4444", hebGreen = "#33cc33", rusDarkBlue = "#222299", spaYellow = "#ffaa33";
+var usBlue = "#99bbff", chiRed = "#ee4444", hebGreen = "#22aa22", rusDarkBlue = "#222299", spaYellow = "#ffaa33";
 
 //define time format
 var parseDate = d3.timeParse("%Y");
@@ -34,7 +34,7 @@ var line_percent = d3.line()
     .x(function(d){ return x(d.year)})
     .y(function(d) {return y(d.number/d.sum)});
 
-var select_lang = [1,1,1,1,1];
+var select_lang = [true,true,true,true,true];
 
 //========== Toggle buttons =============
 g.append("text")
@@ -44,12 +44,12 @@ g.append("text")
         .attr("y", 20)
         .style("opacity", 1)
         .text("American English")
-g.append("rect")
+var button_us = g.append("rect")
         .attr("id", "usEng_button")
         .attr("x", 75)
         .attr("y", 5)
         .attr("height", "20px")
-        .attr("width", "130px")
+        .attr("width", "140px")
         .style("stroke", usBlue)
         .style("fill", "#ffffff")
         .style("fill-opacity", "0")
@@ -63,16 +63,7 @@ g.append("rect")
             svg.select("#usEng_button")
                 .style("stroke-width","1px");
             }
-        )
-        .on("click", function() {
-            if(select_lang[0] == 0){
-                svg.selectAll("#usEng_button")
-                select_lang[0] = 1;
-            } else {
-                svg.selectAll("#useEng_button")
-                select_lang[0] = 0;
-            }
-        });
+        );
 
 g.append("text")
         .attr("class", "toggleText")
@@ -82,7 +73,7 @@ g.append("text")
         .style("opacity", 1)
         .text("Chinese")
 
-g.append("rect")
+var button_chi = g.append("rect")
         .attr("id", "chi_button")
         .attr("x", width/10 * 3 - 5)
         .attr("y", 5)
@@ -101,16 +92,7 @@ g.append("rect")
             svg.select("#chi_button")
                 .style("stroke-width","1px");
             }
-        )
-        .on("click", function() {
-            if(select_lang[1] == 0){
-                svg.selectAll("#usEng_button")
-                select_lang[1] = 1;
-            } else {
-                svg.selectAll("#useEng_button")
-                select_lang[1] = 0;
-            }
-        });
+        );
 
 g.append("text")
         .attr("class", "toggleText")
@@ -119,7 +101,7 @@ g.append("text")
         .attr("y", 20)
         .style("opacity", 1)
         .text("Hebrew")
-g.append("rect")
+var button_heb = g.append("rect")
         .attr("id", "heb_button")
         .attr("x", width/10 * 5 - 5)
         .attr("y", 5)
@@ -138,16 +120,7 @@ g.append("rect")
             svg.select("#heb_button")
                 .style("stroke-width","1px");
             }
-        )
-        .on("click", function() {
-            if(select_lang[2] == 0){
-                svg.selectAll("#heb_button")
-                select_lang[2] = 1;
-            } else {
-                svg.selectAll("#heb_button")
-                select_lang[2] = 0;
-            }
-        });
+        );
 
 g.append("text")
         .attr("class", "toggleText")
@@ -156,7 +129,7 @@ g.append("text")
         .attr("y", 20)
         .style("opacity", 1)
         .text("Russian")
-g.append("rect")
+var button_rus = g.append("rect")
         .attr("id", "rus_button")
         .attr("x", width / 10 * 7 - 5)
         .attr("y", 5)
@@ -175,16 +148,7 @@ g.append("rect")
             svg.select("#rus_button")
                 .style("stroke-width","1px");
             }
-        )
-        .on("click", function() {
-            if(select_lang[3] == 0){
-                svg.selectAll("#rus_button")
-                select_lang[3] = 1;
-            } else {
-                svg.selectAll("#rus_button")
-                select_lang[3] = 0;
-            }
-        });
+        );
 
 g.append("text")
         .attr("class", "toggleText")
@@ -193,7 +157,7 @@ g.append("text")
         .attr("y", 20)
         .style("opacity", 1)
         .text("Spanish")
-g.append("rect")
+var button_spa = g.append("rect")
         .attr("id", "spa_button")
         .attr("x", width/10 * 9 - 5)
         .attr("y", 5)
@@ -212,16 +176,7 @@ g.append("rect")
             svg.select("#spa_button")
                 .style("stroke-width","1px");
             }
-        )
-        .on("click", function() {
-            if(select_lang[4] == 0){
-                svg.selectAll("#spa_button")
-                select_lang[4] = 1;
-            } else {
-                svg.selectAll("#spa_button")
-                select_lang[4] = 0;
-            }
-        });
+        );
 // =====================================//
 //============ printPath ================//
 function printPath_Eng(data) {
@@ -324,6 +279,11 @@ function printPath_Spanish(data) {
             })
             .attr("clip-path", "url(#clip)")
             .style("stroke", spaYellow);
+}
+
+function removePath(name) {
+    var line = g.selectAll("." + name);
+    line.remove();
 }
 
 
@@ -559,7 +519,52 @@ d3.queue()
         printPath_Hebrew(words_heb);
         printPath_Russian(words_rus);
         printPath_Spanish(words_spa);
-
+        
+        button_us.on("click", function() {
+            
+            if (select_lang[0]) {
+                removePath("usEng");
+            } else {
+                printPath_Eng(words_usEng);
+            }
+            select_lang[0] = !select_lang[0];
+        });
+        button_chi.on("click", function() {
+            
+            if (select_lang[1]) {
+                removePath("Chinese");
+            } else {
+                printPath_Chinese(words_chi);
+            }
+            select_lang[1] = !select_lang[1];
+        });
+        button_heb.on("click", function() {
+            
+            if (select_lang[2]) {
+                removePath("Hebrew");
+            } else {
+                printPath_Hebrew(words_heb);
+            }
+            select_lang[2] = !select_lang[2];
+        });
+        button_rus.on("click", function() {
+            
+            if (select_lang[3]) {
+                removePath("Russian");
+            } else {
+                printPath_Russian(words_rus);
+            }
+            select_lang[3] = !select_lang[3];
+        });
+        button_spa.on("click", function() {
+            
+            if (select_lang[4]) {
+                removePath("Spanish");
+            } else {
+                printPath_Spanish(words_spa);
+            }
+            select_lang[4] = !select_lang[4];
+        });
 });
 
 //bind with multiseries data
@@ -572,15 +577,6 @@ function type(d, _, columns) {
         return d;
 }
 
-function findMaxY(data){  // Define function "findMaxY"
-    var maxYValues = data.map(function(d) { 
-      if (d.visible){
-        return d3.max(d.values, function(value) { // Return max rating value
-          return value.rating; })
-      }
-    });
-    return d3.max(maxYValues);
-}
 
 function findMaxFromLanguageTable(data) {
     var maxValues = data.map(function(d) {
