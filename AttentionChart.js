@@ -11,13 +11,23 @@ var margin = {top: 100, right: 80, bottom: 40, left: 150},
 //define time format
 var parseDate = d3.timeParse("%Y");
 
+var show_number = true;
+var click_vol = 0;
+var click_percent = 0;
 var maxY;
 
 //define scales
 var x = d3.scaleTime().range([0, width]),
     y = d3.scaleLinear().range([height, 0]),
+    y_percent = d3.scaleLinear().range([height,0]),
     //color scale
     z = d3.scaleOrdinal(d3.schemeCategory10);
+
+//define Tooltip
+    var toolTip = d3.select("svg").append("toolTip")
+        .attr("class", "tooltip")
+        .style("opacity", 0);
+
 
 //define line generator
 var line = d3.line()
@@ -25,6 +35,10 @@ var line = d3.line()
     .x(function(d) { return x(d.year); })
     .y(function(d) { return y(d.number); });
 
+var line_percent = d3.line()
+    .curve(d3.curBasis)
+    .x(function(d){ return x(d.year)})
+    .y(function(d) {return y(d.number/d.sum)});
 
 //load data
 var data = d3.csv("usEng.csv", type, function(error, data) {
@@ -36,10 +50,10 @@ var data = d3.csv("usEng.csv", type, function(error, data) {
     //parse data
     var words = data.columns.slice(1,10).map(function(id) {
         return {
-            id: id,
-            values: data.map(function(d) {
-                return {year: d.year, number: d[id], sum: +d.sum};
-            }),
+            id: (id === "total" ? "average" : id),
+            values: (id === "total" ? data.map(function(d) {
+                return {laguage: "Chinese language", year: d.year, number: d[id]/8, sum: +d.sum}; }) : data.map(function(d) {
+                return {language: "Chinese language",year: d.year, number: d[id], sum: +d.sum};})),
             visible: (id === "total" ? true : false) // "visible": all false except for total which is true.    
         };
     });
@@ -49,95 +63,225 @@ var data = d3.csv("usEng.csv", type, function(error, data) {
     x.domain(d3.extent(data, function(d) { return d.year; }));
 
     //define y axis
-    y.domain([
-        d3.min(words, function(c) { return d3.min(c.values, function (d) { return d.number; }); }),
+    y.domain([0,
         d3.max(words, function(c) { return d3.max(c.values, function(d) { return d.number; }); })
     ]);
+    y_percent.domain([0,d3.max(words, function(c) {return d3.max(c.values, function(d) {return d.number/d.sum})})]);
 
     //define color scale
     z.domain(words.map(function(c) { return c.id; }));
 
     
+    
     //append x axis
     g.append("g")
-        .attr("class", "axis axis-x")
+        .attr("class", "axis-x")
         .attr("transform", "translate(0," + height + ")")
         .call(d3.axisBottom(x));
 
     //append y axis
     g.append("g")
-        .attr("class", "axis axis-y")
+        .attr("class", "axis-y")
         .call(d3.axisLeft(y))
-        .append("text")
-        .attr("transform", "rotate(-90)")
-        .attr("y", -90)
-        .attr("x", -125)
+        .attr("transform", "translate(0, 0)")
+        .style("opacity", 1);
+    
+    //append y text
+
+    g.append("text")
+        .attr("id", "rightText")
+        .attr("y", -75)
+        .attr("x", -300)
         .attr("dy", "0.9em")
-        .attr("fill", "#000")
-        .text("Volume of Books");
-
-    //append word data to svg
-    var word = g.selectAll(".word")
-        .data(words)
-        .enter()
-        .append("g")
-        .attr("class", "word");
-
-
-    //append word path to svg with animation
-    word.append("path")
-      .attr("class", "line")
-      .style("pointer-events", "none") // Stop line interferring with cursor
-      .attr("id", function(d) {
-        return "line-" + d.id; // Give line id of line-(insert issue name, with any spaces replaced with no spaces)
-      })
-      .attr("d", function(d) { 
-        var Opacity = d.visible ? 1 : 0;
-        d3.select("#line-"+d.id).style("opacity", Opacity);  
-        return line(d.values); // If array key "visible" = true then draw line, if not then don't 
-    })
-      .attr("clip-path", "url(#clip)")//use clip path to make irrelevant part invisible
-      .style("stroke", function(d) { return z(d.id); });
-
-      var legendSpace = 600 / words.length; // 450/number of issues (ex. 40)  
+        .attr("transform", "rotate(-90)")
+        .style("opacity", 0)
+        .text("Volume of Books")
+        .transition()
+        .duration(500)
+        .style("opacity", 1);
     
-      word.append("rect")
-      .attr("width", 10)
-      .attr("height", 10)                                    
-      .attr("y", (margin.right/3) - 50) 
-      .attr("x", function (d, i) { return (legendSpace)+i*(legendSpace); })  // spacing
-      .attr("fill",function(d) {
-        return d.visible ? z(d.id) : "#F1F1F2"; // If array key "visible" = true then color rect, if not then make it grey 
-      })
-      .attr("class", "legend-box")
+    //Dray y title box/button
+    g.append("rect")
+        .attr("id", "rightRect")
+        .attr("x", -305)
+        .attr("y", -75)
+        .attr("rx", 5)
+        .attr("ry", 5)
+        .attr("height", "20px")
+        .attr("width", 125)
+        .attr("transform", "rotate(-90)")
+        .style("stroke", "#000000")
+        .style("fill", "#ffffff")
+        .style("fill-opacity", "0")
+        .style("opacity",0)
+        .on("mouseover", function() {
+            svg.select("#rightRect")
+                .style("stroke-width","3px");
+            }
+        )
+        .on("mouseout", function() {
+            svg.select("#rightRect")
+                .style("stroke-width","1px");
+            }
+        )
+        .on("click", function() {
+            show_number = true;
+                move_percent();
+                draw_line();
+         })
+        .transition()
+        .duration(500)
+        .style("opacity",1);
     
     
-      .on("click", function(d){ // On click make d.visible 
-        d.visible = !d.visible; // If array key for this data selection is "visible" = true then make it false, if false then make it true
+    //append y_percent axis
+    g.append("g")
+        .attr("class", "axis-y-percent")
+        .attr("transform", "translate(-90, 0)")
+        .call(d3.axisLeft(y_percent))
+        .style("opacity", 1);
+    
+    
         
-        maxY = findMaxY(words); // Find max Y rating value categories data with "visible"; true
-        y.domain([0,maxY]); // Redefine yAxis domain based on highest y value of categories data with "visible"; true
-        
-        svg.select("axis-y")
-          .transition()
-          .call(d3.axisLeft(y))
-        		  
-        var newOpacity = d.visible ? 1 : 0;
-        d3.select("#line-"+d.id).style("opacity", newOpacity);
-       
-        word.select("rect")
-          .transition()
-          .attr("fill", function(d) {
-          return d.visible ? z(d.id) : "#F1F1F2";
-        });
+    //append y_percent text
+    g.append("text")
+        .attr("id", "percentText")
+        .attr("y", -145)
+        .attr("x", -325)
+        .attr("dy", "0.9em")
+        .attr("transform", "rotate(-90)")
+        .style("opacity", 0)
+        .text("percentage of the year")
+        .transition()
+        .duration(500)
+        .style("opacity", 1);
     
-          
-      })
-          
-      word.append("text")
-      .attr("y", (margin.right/3) - 55) 
-      .attr("x", function (d, i) { return (legendSpace)+i*(legendSpace); })  // (return (11.25/2 =) 5.625) + i * (5.625) 
-      .text(function(d) { return d.id; }); 
+    //Draw y_percent title box/button
+    g.append("rect")
+        .attr("id", "percentRect")
+        .attr("x", -335)
+        .attr("y", -145)
+        .attr("rx", 5)
+        .attr("ry", 5)
+        .attr("height", "20px")
+        .attr("width", 175)
+        .attr("transform", "rotate(-90)")
+        .style("stroke", "#000000")
+        .style("fill", "#ffffff")
+        .style("fill-opacity", "0")
+        .style("opacity",0)
+        .on("mouseover", function() {
+            svg.select("#percentRect")
+                .style("stroke-width","3px");
+            }
+        )
+        .on("mouseout", function() {
+            svg.select("#percentRect")
+                .style("stroke-width","1px");
+            }
+        )
+        .on("click", function() {
+            show_number = false;
+                move_percent();
+                draw_line();
+         })
+        .transition()
+        .duration(500)
+        .style("opacity",1);
+    
+    
+    var visible_state = [{line_usEng: select_lang[0]},
+                        {line_Chinese: select_lang[1]},
+                        {line_Hebrew: select_lang[2]},
+                        {line_Rus: select_lang[3]},
+                        {line_Spa: select_lang[4]}];
+        
+    
+    function draw_line(){
+        //create line
+        var line_usEng = g.selectAll(".word")
+            .data(usEng)
+            .enter()
+            .append("g")
+            .attr("class", "word");
+        
+        var line_Chinese = g.selectAll(".word")
+            .data(Chinese)
+            .enter()
+            .append("g")
+            .attr("class", "word");
+        
+        var line_Hebrew = g.selectAll(".word")
+            .data(usEng)
+            .enter()
+            .append("g")
+            .attr("class", "word");
+        
+        var line_Rus = g.selectAll(".word")
+            .data(usEng)
+            .enter()
+            .append("g")
+            .attr("class", "word");
+        
+        var line_Spa = g.selectAll(".word")
+            .data(usEng)
+            .enter()
+            .append("g")
+            .attr("class", "word");
+        
+        for (var key in visible_state){
+            
+            if (visible_state[key] === 1){
+               key.append("path")
+                  .attr("class", "line")
+                  .style("pointer-events", "none") // Stop line interferring with cursor
+                  .attr("d", function(d) { 
+                    return show_number ? line(d.values) : line_percent(d.values); // If array key "visible" = true then draw line, if not then don't 
+                  })
+                 .attr("clip-path", "url(#clip)")//use clip path to make irrelevant part invisible
+                 .style("stroke", function(d) { return z(d.id); })
+                 .on("mouseover", function(d) {
+                        toolTip.transition()
+                               .duration(200)
+                               .style("opacity", .9);
+                        toolTip.html(d.language + "<br/>" + "Num. of Books " + d.number
+                                + "<br/>" + "% in the year" + d.number/d.sum + "%" 
+                               .style("left", (d3.event.pageX) + "px")
+                               .style("top", (d3.event.pageY - 28) + "px"));         
+                  })
+                  .on("mouseout", function(d){
+                         toolTip.transition()
+                                .duration(500)
+                                .style("opacity", 0);
+                   });
+             }
+        }
+        
+    }
+    
+    //updated move_percent()function
+    
+    function move_percent(){
+    g.selectAll(".axis-y")
+        .attr("transform", "translate(" + (show_number ? "0" : "-80") + ", 0)");
+    g.selectAll("#rightText")
+        .attr("y", show_number ? -75 : -150);
+    g.selectAll("#rightRect")
+        .attr("y", show_number ? -75: - 150);
+
+    g.selectAll(".axis-y-percent")
+        .transition()
+        .duration(500)
+        .attr("transform", "translate(" + (show_number ? "-90" : "0") + ", 0)" );
+    g.selectAll("#percentText")
+        .transition()
+        .duration(500)
+        .attr("y", show_number ? -145 : -65);
+    g.selectAll("#percentRect")
+        .transition()
+        .duration(500)
+        .attr("y", show_number ? -145: - 65);
+    }
 
 });
 
