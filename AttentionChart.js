@@ -16,9 +16,9 @@ var show_number = true;
 var maxY;
 
 //define scales
-var x = d3.scaleTime().range([0, width]),
-    y = d3.scaleLinear().range([height, 0]),
-    y_percent = d3.scaleLinear().range([height,0]),
+var x = d3.scaleTime().range([0, width / 10 * 8]),
+    y = d3.scaleLinear().range([height - 50, 50]),
+    y_percent = d3.scaleLinear().range([height - 50, 50]),
 
     //color scale
     z = d3.scaleOrdinal(d3.schemeCategory20);
@@ -395,7 +395,7 @@ d3.queue()
     //append x axis
     g.append("g")
         .attr("class", "axis axis-x")
-        .attr("transform", "translate(0," + height + ")")
+        .attr("transform", "translate(0," + (height - 50) + ")")
         .call(d3.axisBottom(x));
 
     //append y axis
