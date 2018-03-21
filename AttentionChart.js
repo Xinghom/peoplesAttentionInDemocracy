@@ -1,6 +1,6 @@
 var svg = d3.select("svg")
             .attr("width", 1080)
-            .attr("height", 960);
+            .attr("height", 760);
 
 var margin = {top: 100, right: 80, bottom: 40, left: 150},
     width = svg.attr("width") - margin.left - margin.right,
