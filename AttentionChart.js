@@ -12,12 +12,14 @@ var usBlue = "#2222ff", chiRed = "#ee4444", hebGreen = "#33cc33", rusDarkBlue = 
 
 //define time format
 var parseDate = d3.timeParse("%Y");
-
+var show_number = true;
 var maxY;
 
 //define scales
 var x = d3.scaleTime().range([0, width]),
     y = d3.scaleLinear().range([height, 0]),
+    y_percent = d3.scaleLinear().range([height,0]),
+
     //color scale
     z = d3.scaleOrdinal(d3.schemeCategory20);
 
@@ -27,7 +29,12 @@ var line = d3.line()
     .x(function(d) { return x(d.year); })
     .y(function(d) { return y(d.number); });
 
-var selet_lang = [1,1,1,1,1];
+var line_percent = d3.line()
+    .curve(d3.curBasis)
+    .x(function(d){ return x(d.year)})
+    .y(function(d) {return y(d.number/d.sum)});
+
+var select_lang = [1,1,1,1,1];
 
 //========== Toggle buttons =============
 g.append("text")
@@ -58,12 +65,12 @@ g.append("rect")
             }
         )
         .on("click", function() {
-            if(selet_lang[0] == 0){
+            if(select_lang[0] == 0){
                 svg.selectAll("#usEng_button")
-                selet_lang[0] = 1;
+                select_lang[0] = 1;
             } else {
                 svg.selectAll("#useEng_button")
-                selet_lang[0] = 0;
+                select_lang[0] = 0;
             }
         });
 
@@ -96,12 +103,12 @@ g.append("rect")
             }
         )
         .on("click", function() {
-            if(selet_lang[1] == 0){
+            if(select_lang[1] == 0){
                 svg.selectAll("#usEng_button")
-                selet_lang[1] = 1;
+                select_lang[1] = 1;
             } else {
                 svg.selectAll("#useEng_button")
-                selet_lang[1] = 0;
+                select_lang[1] = 0;
             }
         });
 
@@ -133,12 +140,12 @@ g.append("rect")
             }
         )
         .on("click", function() {
-            if(selet_lang[2] == 0){
+            if(select_lang[2] == 0){
                 svg.selectAll("#heb_button")
-                selet_lang[2] = 1;
+                select_lang[2] = 1;
             } else {
                 svg.selectAll("#heb_button")
-                selet_lang[2] = 0;
+                select_lang[2] = 0;
             }
         });
 
@@ -170,12 +177,12 @@ g.append("rect")
             }
         )
         .on("click", function() {
-            if(selet_lang[3] == 0){
+            if(select_lang[3] == 0){
                 svg.selectAll("#rus_button")
-                selet_lang[3] = 1;
+                select_lang[3] = 1;
             } else {
                 svg.selectAll("#rus_button")
-                selet_lang[3] = 0;
+                select_lang[3] = 0;
             }
         });
 
@@ -207,12 +214,12 @@ g.append("rect")
             }
         )
         .on("click", function() {
-            if(selet_lang[4] == 0){
+            if(select_lang[4] == 0){
                 svg.selectAll("#spa_button")
-                selet_lang[4] = 1;
+                select_lang[4] = 1;
             } else {
                 svg.selectAll("#spa_button")
-                selet_lang[4] = 0;
+                select_lang[4] = 0;
             }
         });
 // =====================================//
@@ -240,46 +247,51 @@ d3.queue()
     
     var words_usEng = list[0].columns.slice(1,10).map(function(id) {
         return {
-          id: id,
-          values: list[0].map(function(d) {
+          id: (id === "total" ? "average" : id),
+          values: (id === "total" ? list[0].map(function(d) {
+                return {year: d.year, number: d[id]/8, sum: +d.sum}; }) : list[0].map(function(d) {
               return {year: d.year, number:d[id], sum: +d.sum};
-          }),
+          })),
           visible: (id === "total" ? true : false)
         }
     });
     var words_chi = list[1].columns.slice(1,10).map(function(id) {
         return {
-          id: id,
-          values: list[1].map(function(d) {
+          id: (id === "total" ? "average" : id),
+          values: (id === "total" ? list[1].map(function(d) {
+                return {year: d.year, number: d[id]/8, sum: +d.sum}; }) : list[1].map(function(d) {
               return {year: d.year, number:d[id], sum: +d.sum};
-          }),
+          })),
           visible: (id === "total" ? true : false)
         }
     });
     var words_heb = list[2].columns.slice(1,10).map(function(id) {
         return {
-          id: id,
-          values: list[2].map(function(d) {
+          id: (id === "total" ? "average" : id),
+          values: (id === "total" ? list[2].map(function(d) {
+                return {year: d.year, number: d[id]/8, sum: +d.sum}; }) : list[2].map(function(d) {
               return {year: d.year, number:d[id], sum: +d.sum};
-          }),
+          })),
           visible: (id === "total" ? true : false)
         }
     });
     var words_rus = list[3].columns.slice(1,10).map(function(id) {
         return {
-          id: id,
-          values: list[3].map(function(d) {
+          id: (id === "total" ? "average" : id),
+          values: (id === "total" ? list[3].map(function(d) {
+                return {year: d.year, number: d[id]/8, sum: +d.sum}; }) : list[3].map(function(d) {
               return {year: d.year, number:d[id], sum: +d.sum};
-          }),
+          })),
           visible: (id === "total" ? true : false)
         }
     });
     var words_spa = list[4].columns.slice(1,10).map(function(id) {
         return {
-          id: id,
-          values: list[4].map(function(d) {
+          id: (id === "total" ? "average" : id),
+          values: (id === "total" ? list[4].map(function(d) {
+                return {year: d.year, number: d[id]/8, sum: +d.sum}; }) : list[4].map(function(d) {
               return {year: d.year, number:d[id], sum: +d.sum};
-          }),
+          })),
           visible: (id === "total" ? true : false)
         }
     });
@@ -287,19 +299,29 @@ d3.queue()
     
     var array_maxNumsOfList = [];
     list_lang.forEach(function(lang_words) {
-        console.table(lang_words);
         var temp = findMaxFromLanguageTable(lang_words);
         console.log(findMaxFromLanguageTable(lang_words));
         array_maxNumsOfList.push(temp);
     });
+    
+    var array_maxPercentOfList = [];
+    list_lang.forEach(function(lang_words) {
+        var temp = findMaxPercent(lang_words);
+        array_maxPercentOfList.push(temp);
+    });
+    console.log(array_maxPercentOfList);
 //    console.log(array_maxNumsOfList);
     
     //define x axis
-    x.domain(d3.extent(words_usEng, function(d) { return d.year; }));
+    x.domain(d3.extent(usEng_data, function(d) { return d.year; }));
     //define y axis
     y.domain([
         0,
         d3.max(array_maxNumsOfList)
+    ]);
+    y_percent.domain([
+        0,
+        d3.max(array_maxPercentOfList)
     ]);
 
     //define color scale
@@ -316,55 +338,234 @@ d3.queue()
     g.append("g")
         .attr("class", "axis axis-y")
         .call(d3.axisLeft(y))
-        .append("text")
-        .attr("transform", "rotate(-90)")
-        .attr("y", -90)
-        .attr("x", -125)
+        .style("opacity", 0)
+        .transition()
+        .duration(500)
+        .style("opacity", 1);
+    
+    //append y text
+
+    g.append("text")
+        .attr("id", "rightText")
+        .attr("y", -75)
+        .attr("x", -300)
         .attr("dy", "0.9em")
-        .attr("fill", "#000")
-        .text("Volume of Books");
+        .attr("transform", "rotate(-90)")
+        .style("opacity", 0)
+        .text("Volume of Books")
+        .transition()
+        .duration(500)
+        .style("opacity", 1);
+    
+    //Dray y title box/button
+    g.append("rect")
+        .attr("id", "rightRect")
+        .attr("x", -305)
+        .attr("y", -75)
+        .attr("rx", 5)
+        .attr("ry", 5)
+        .attr("height", "20px")
+        .attr("width", 125)
+        .attr("transform", "rotate(-90)")
+        .style("stroke", "#000000")
+        .style("fill", "#ffffff")
+        .style("fill-opacity", "0")
+        .style("opacity",0)
+        .on("mouseover", function() {
+            svg.select("#rightRect")
+                .style("stroke-width","3px");
+            }
+        )
+        .on("mouseout", function() {
+            svg.select("#rightRect")
+                .style("stroke-width","1px");
+            }
+        )
+        .on("click", function() {
+            show_number = !show_number;
+            if(show_number === true){
+                draw_line();
+            }
+         })
+        .transition()
+        .duration(500)
+        .style("opacity",1);
+    
+    
+    //append y_percent axis
+    g.append("g")
+        .attr("class", "axis axis-y-percent")
+        .attr("transform", "translate(-90, 0)")
+        .call(d3.axisLeft(y_percent))
 
-    //append data to svg
-    var Trend_usEng = g.selectAll(".language")
-        .data(words_usEng)
-        .enter()
-        .append("g")
-        .attr("class", "language");
-    var Trend_chi = g.selectAll(".language")
-        .data(words_chi)
-        .enter()
-        .append("g")
-        .attr("class", "language");
-    var Trend_heb = g.selectAll(".language")
-        .data(words_heb)
-        .enter()
-        .append("g")
-        .attr("class", "language");
-    var Trend_rus = g.selectAll(".language")
-        .data(words_rus)
-        .enter()
-        .append("g")
-        .attr("class", "language");
-    var Trend_spa = g.selectAll(".language")
-        .data(words_spa)
-        .enter()
-        .append("g")
-        .attr("class", "language");
+        .attr("dy", "0.9em")
+        .style("opacity", 0)
+        .transition()
+        .duration(500)
+        .style("opacity", 1);
+    
+    
+        
+    //append y_percent text
+    g.append("text")
+        .attr("id", "percentText")
+        .attr("y", -145)
+        .attr("x", -300)
+        .attr("dy", "0.9em")
+        .attr("transform", "rotate(-90)")
+        .style("opacity", 0)
+        .text("percentage of the year")
+        .transition()
+        .duration(500)
+        .style("opacity", 1);
+    
+    //Draw y_percent title box/button
+    g.append("rect")
+        .attr("id", "percentRect")
+        .attr("x", -305)
+        .attr("y", -145)
+        .attr("rx", 5)
+        .attr("ry", 5)
+        .attr("height", "20px")
+        .attr("width", 175)
+        .attr("transform", "rotate(-90)")
+        .style("stroke", "#000000")
+        .style("fill", "#ffffff")
+        .style("fill-opacity", "0")
+        .style("opacity",0)
+        .on("mouseover", function() {
+            svg.select("#percentRect")
+                .style("stroke-width","3px");
+            }
+        )
+        .on("mouseout", function() {
+            svg.select("#percentRect")
+                .style("stroke-width","1px");
+            }
+        )
+        .on("click", function() {
+            show_number = !show_number;
+                draw_line();
+         })
+        .transition()
+        .duration(500)
+        .style("opacity",1);
+        
+    var line_usEng = g.selectAll(".word")
+            .data(words_usEng)
+            .enter()
+            .append("g")
+            .attr("class", "word");
+        
+    var line_Chinese = g.selectAll(".word")
+            .data(words_chi)
+            .enter()
+            .append("g")
+            .attr("class", "word");
+        
+    var line_Hebrew = g.selectAll(".word")
+            .data(words_heb)
+            .enter()
+            .append("g")
+            .attr("class", "word");
+        
+    var line_Rus = g.selectAll(".word")
+            .data(words_rus)
+            .enter()
+            .append("g")
+            .attr("class", "word");
+        
+    var line_Spa = g.selectAll(".word")
+            .data(words_spa)
+            .enter()
+            .append("g")
+            .attr("class", "word");
+    
+    var visible_state = [{line_usEng: select_lang[0]},
+                        {line_Chinese: select_lang[1]},
+                        {line_Hebrew: select_lang[2]},
+                        {line_Rus: select_lang[3]},
+                        {line_Spa: select_lang[4]}];
+    
+    function draw_line(){
+        //create line
+        for (var key in visible_state) {
+            if (visible_state[key] == 1){
+               key.append("path")
+                  .attr("class", "line")
+                  .style("pointer-events", "none") // Stop line interferring with cursor
+                  .attr("d", function(d) { 
+                    return show_number ? line(d.values) : line_percent(d.values); // If array key "visible" = true then draw line, if not then don't 
+                  })
+                 .attr("clip-path", "url(#clip)")//use clip path to make irrelevant part invisible
+                 .style("stroke", chiRed);
+//                 .style("stroke", function(d) { return z(d.id); });
+            }
+        }
+        
+    }
 
-    //append Trend path to svg with animation
-    Trend_usEng.append("path")
-      .attr("class", "line")
-      .style("pointer-events", "none") // Stop line interferring with cursor
-      .attr("id", function(d) {
-        return "line-" + d.id; // Give line id of line-(insert issue name, with any spaces replaced with no spaces)
-      })
-      .attr("d", function(d) {
-        console.log(d);
-        var Opacity = d.visible ? 1 : 0;
-        d3.select("#line-"+d.id).style("opacity", Opacity);  
-        return line(d.values); // If array key "visible" = true then draw line, if not then don't 
-        })
-      .style("stroke", function(d) { return z(d.id); });
+    
+//    //**************************//
+//    //append x axis
+//    g.append("g")
+//        .attr("class", "axis axis-x")
+//        .attr("transform", "translate(0," + height + ")")
+//        .call(d3.axisBottom(x));
+//
+//    //append y axis
+//    g.append("g")
+//        .attr("class", "axis axis-y")
+//        .call(d3.axisLeft(y))
+//        .append("text")
+//        .attr("transform", "rotate(-90)")
+//        .attr("y", -90)
+//        .attr("x", -125)
+//        .attr("dy", "0.9em")
+//        .attr("fill", "#000")
+//        .text("Volume of Books");
+//
+//    //append data to svg
+//    var Trend_usEng = g.selectAll(".language")
+//        .data(words_usEng)
+//        .enter()
+//        .append("g")
+//        .attr("class", "language");
+//    var Trend_chi = g.selectAll(".language")
+//        .data(words_chi)
+//        .enter()
+//        .append("g")
+//        .attr("class", "language");
+//    var Trend_heb = g.selectAll(".language")
+//        .data(words_heb)
+//        .enter()
+//        .append("g")
+//        .attr("class", "language");
+//    var Trend_rus = g.selectAll(".language")
+//        .data(words_rus)
+//        .enter()
+//        .append("g")
+//        .attr("class", "language");
+//    var Trend_spa = g.selectAll(".language")
+//        .data(words_spa)
+//        .enter()
+//        .append("g")
+//        .attr("class", "language");
+//
+//    //append Trend path to svg with animation
+//    Trend_usEng.append("path")
+//      .attr("class", "line")
+//      .style("pointer-events", "none") // Stop line interferring with cursor
+//      .attr("id", function(d) {
+//        return "line-" + d.id; // Give line id of line-(insert issue name, with any spaces replaced with no spaces)
+//      })
+//      .attr("d", function(d) {
+//        console.log(d);
+//        var Opacity = d.visible ? 1 : 0;
+//        d3.select("#line-"+d.id).style("opacity", Opacity);  
+//        return line(d.values); // If array key "visible" = true then draw line, if not then don't 
+//        })
+//      .style("stroke", function(d) { return z(d.id); });
 });
 
 ////load data
@@ -511,4 +712,15 @@ function findMaxFromLanguageTable(data) {
         }
     });
     return d3.max(maxValues);
+}
+
+function findMaxPercent(data) {
+    var maxValues = data.map(function(d) {
+        if (d.visible){
+            return d3.max(d.values, function(value) {
+                return value.number / value.sum;
+            });
+        }
+    });
+    return d3.max(maxValues); 
 }
