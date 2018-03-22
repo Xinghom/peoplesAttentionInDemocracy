@@ -276,10 +276,10 @@ function printPath_Chinese(data) {
                         + "Liberty : " + formatComma(d.liberty) + "<br/>"
                         + "Justice : " + formatComma(d.justice) + "<br/>"
                         + "Equality : " + formatComma(d.equality) + "<br/>"
-                        + "Rights : " + commaFormat(d.rights) + "<br/>" 
-                        + "Election : " + commaFormat(d.election) + "<br/>"
-                        + "Citizen : " + commaFormat(d.citizen) + "<br/>"
-                        + "Protests : " + commaFormat(d.protests)
+                        + "Rights : " + formatComma(d.rights) + "<br/>" 
+                        + "Election : " + formatComma(d.election) + "<br/>"
+                        + "Citizen : " + formatComma(d.citizen) + "<br/>"
+                        + "Protests : " + formatComma(d.protests)
                 )
                         .style("left", (d3.event.pageX + 30) + "px")
                         .style("top", (d3.event.pageY - 28) + "px");
@@ -319,14 +319,14 @@ function printPath_Hebrew(data) {
                     .style("opacity", 0.9);
                 div.html(
                         d.language + "<br/>" 
-                        + "Democracy : " + commaFormat(d.democracy) + "<br/>"
-                        + "Liberty : " + commaFormat(d.liberty) + "<br/>"
-                        + "Justice : " + commaFormat(d.justice) + "<br/>"
-                        + "Equality : " + commaFormat(d.equality) + "<br/>"
-                        + "Rights : " + commaFormat(d.rights) + "<br/>" 
-                        + "Election : " + commaFormat(d.election) + "<br/>"
-                        + "Citizen : " + commaFormat(d.citizen) + "<br/>"
-                        + "Protests : " + commaFormat(d.protests)
+                        + "Democracy : " + formatComma(d.democracy) + "<br/>"
+                        + "Liberty : " + formatComma(d.liberty) + "<br/>"
+                        + "Justice : " + formatComma(d.justice) + "<br/>"
+                        + "Equality : " + formatComma(d.equality) + "<br/>"
+                        + "Rights : " + formatComma(d.rights) + "<br/>" 
+                        + "Election : " + formatComma(d.election) + "<br/>"
+                        + "Citizen : " + formatComma(d.citizen) + "<br/>"
+                        + "Protests : " + formatComma(d.protests)
                 )
                         .style("left", (d3.event.pageX + 30) + "px")
                         .style("top", (d3.event.pageY - 28) + "px");
@@ -367,13 +367,13 @@ function printPath_Russian(data) {
                 div.html(
                         d.language + "<br/>" 
                         + "Democracy : " + formatComma(d.democracy) + "<br/>"
-                        + "Liberty : " + commaFormat(d.liberty) + "<br/>"
-                        + "Justice : " + commaFormat(d.justice) + "<br/>"
-                        + "Equality : " + commaFormat(d.equality) + "<br/>"
-                        + "Rights : " + commaFormat(d.rights) + "<br/>" 
-                        + "Election : " + commaFormat(d.election) + "<br/>"
-                        + "Citizen : " + commaFormat(d.citizen) + "<br/>"
-                        + "Protests : " + commaFormat(d.protests)
+                        + "Liberty : " + formatComma(d.liberty) + "<br/>"
+                        + "Justice : " + formatComma(d.justice) + "<br/>"
+                        + "Equality : " + formatComma(d.equality) + "<br/>"
+                        + "Rights : " + formatComma(d.rights) + "<br/>" 
+                        + "Election : " + formatComma(d.election) + "<br/>"
+                        + "Citizen : " + formatComma(d.citizen) + "<br/>"
+                        + "Protests : " + formatComma(d.protests)
                 )
                         .style("left", (d3.event.pageX + 30) + "px")
                         .style("top", (d3.event.pageY - 28) + "px");
@@ -413,14 +413,14 @@ function printPath_Spanish(data) {
                     .style("opacity", 0.9);
                 div.html(
                         d.language + "<br/>" 
-                        + "Democracy " + commaFormat(d.democracy) + "<br/>"
-                        + "Liberty : " + commaFormat(d.liberty) + "<br/>"
-                        + "Justice : " + commaFormat(d.justice) + "<br/>"
-                        + "Equality : " + commaFormat(d.equality) + "<br/>"
-                        + "Rights : " + commaFormat(d.rights) + "<br/>" 
-                        + "Election : " + commaFormat(d.election) + "<br/>"
-                        + "Citizen : " + commaFormat(d.citizen) + "<br/>"
-                        + "Protests : " + commaFormat(d.protests)
+                        + "Democracy " + formatComma(d.democracy) + "<br/>"
+                        + "Liberty : " + formatComma(d.liberty) + "<br/>"
+                        + "Justice : " + formatComma(d.justice) + "<br/>"
+                        + "Equality : " + formatComma(d.equality) + "<br/>"
+                        + "Rights : " + formatComma(d.rights) + "<br/>" 
+                        + "Election : " + formatComma(d.election) + "<br/>"
+                        + "Citizen : " + formatComma(d.citizen) + "<br/>"
+                        + "Protests : " + formatComma(d.protests)
                 )
                         .style("left", (d3.event.pageX + 30) + "px")
                         .style("top", (d3.event.pageY - 28) + "px");
@@ -557,7 +557,7 @@ d3.queue()
     });
     var words_spa = list[4].columns.slice(1,10).map(function(id) {
         return {
-          language: "Russian",
+          language: "Spanish",
           id: (id === "total" ? "average" : id),
           values: (id === "total" ? list[4].map(function(d) {
                 return {language: "Spanish", year: d.year, number: d[id]/8, sum: +d.sum}; }) : list[4].map(function(d) {
