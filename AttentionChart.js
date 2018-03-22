@@ -193,6 +193,7 @@ function printPath_Eng(data) {
             .enter()
             .append("g")
             .attr("class", "usEng");
+    
     line_usEng.append("path")
             .attr("class", "line")
             .style("opacity", 0)
@@ -218,9 +219,16 @@ function printPath_Eng(data) {
                     .duration(200)
                     .style("opacity", 0.9);
                 div.html(
-                        d.language + "<br/>" + "Num. of Books " + d.number
-                        + "<br/>" + "% in the year" + d.number/d.sum + "%"
-                        )
+                        d.language + "<br/>" 
+                        + "Democracy : " + d.democracy + "<br/>"
+                        + "Liberty : " + d.liberty + "<br/>"
+                        + "Justice : " + d.justice + "<br/>"
+                        + "Equality : " + d.equality + "<br/>"
+                        + "Rights : " + d.rights + "<br/>" 
+                        + "Election : " + d.election + "<br/>"
+                        + "Citizen : " + d.citizen + "<br/>"
+                        + "Protests : " + d.protests
+                )
                         .style("left", (d3.event.pageX + 30) + "px")
                         .style("top", (d3.event.pageY - 28) + "px");
             })
@@ -261,9 +269,16 @@ function printPath_Chinese(data) {
                     .duration(200)
                     .style("opacity", 0.9);
                 div.html(
-                        d.language + "<br/>" + "Num. of Books " + d.number
-                        + "<br/>" + "% in the year" + d.number/d.sum + "%"
-                        )
+                        d.language + "<br/>" 
+                        + "Democracy : " + d.democracy + "<br/>"
+                        + "Liberty : " + d.liberty + "<br/>"
+                        + "Justice : " + d.justice + "<br/>"
+                        + "Equality : " + d.equality + "<br/>"
+                        + "Rights : " + d.rights + "<br/>" 
+                        + "Election : " + d.election + "<br/>"
+                        + "Citizen : " + d.citizen + "<br/>"
+                        + "Protests : " + d.protests
+                )
                         .style("left", (d3.event.pageX + 30) + "px")
                         .style("top", (d3.event.pageY - 28) + "px");
             })
@@ -301,9 +316,16 @@ function printPath_Hebrew(data) {
                     .duration(200)
                     .style("opacity", 0.9);
                 div.html(
-                        d.language + "<br/>" + "Num. of Books " + d.number
-                        + "<br/>" + "% in the year" + d.number/d.sum + "%"
-                        )
+                        d.language + "<br/>" 
+                        + "Democracy : " + d.democracy + "<br/>"
+                        + "Liberty : " + d.liberty + "<br/>"
+                        + "Justice : " + d.justice + "<br/>"
+                        + "Equality : " + d.equality + "<br/>"
+                        + "Rights : " + d.rights + "<br/>" 
+                        + "Election : " + d.election + "<br/>"
+                        + "Citizen : " + d.citizen + "<br/>"
+                        + "Protests : " + d.protests
+                )
                         .style("left", (d3.event.pageX + 30) + "px")
                         .style("top", (d3.event.pageY - 28) + "px");
             })
@@ -341,9 +363,16 @@ function printPath_Russian(data) {
                     .duration(200)
                     .style("opacity", 0.9);
                 div.html(
-                        d.language + "<br/>" + "Num. of Books " + d.values
-                        + "<br/>" + "% in the year" + d.number/d.sum + "%"
-                        )
+                        d.language + "<br/>" 
+                        + "Democracy : " + d.democracy + "<br/>"
+                        + "Liberty : " + d.liberty + "<br/>"
+                        + "Justice : " + d.justice + "<br/>"
+                        + "Equality : " + d.equality + "<br/>"
+                        + "Rights : " + d.rights + "<br/>" 
+                        + "Election : " + d.election + "<br/>"
+                        + "Citizen : " + d.citizen + "<br/>"
+                        + "Protests : " + d.protests
+                )
                         .style("left", (d3.event.pageX + 30) + "px")
                         .style("top", (d3.event.pageY - 28) + "px");
             })
@@ -381,9 +410,16 @@ function printPath_Spanish(data) {
                     .duration(200)
                     .style("opacity", 0.9);
                 div.html(
-                        d.language + "<br/>" + "Num. of Books " + d.number
-                        + "<br/>" + "% in the year" + d.number/d.sum + "%"
-                        )
+                        d.language + "<br/>" 
+                        + "Democracy " + d.democracy + "<br/>"
+                        + "Liberty : " + d.liberty + "<br/>"
+                        + "Justice : " + d.justice + "<br/>"
+                        + "Equality : " + d.equality + "<br/>"
+                        + "Rights : " + d.rights + "<br/>" 
+                        + "Election : " + d.election + "<br/>"
+                        + "Citizen : " + d.citizen + "<br/>"
+                        + "Protests : " + d.protests
+                )
                         .style("left", (d3.event.pageX + 30) + "px")
                         .style("top", (d3.event.pageY - 28) + "px");
             })
@@ -393,7 +429,6 @@ function printPath_Spanish(data) {
                  .style("opacity", 0);
                });
 }
-
 function removePath(name) {
     var line = g.selectAll("." + name);
     line.remove();
@@ -447,12 +482,20 @@ d3.queue()
     
     var words_usEng = list[0].columns.slice(1,10).map(function(id) {
         return {
-          language: "AmericanEnglish",
+          language: "American English",
           id: (id === "total" ? "average" : id),
           values: (id === "total" ? list[0].map(function(d) {
-                return {language: "AmericanEnglish", year: d.year, number: d[id]/8, sum: +d.sum}; }) : list[0].map(function(d) {
+                return {language: "American English", year: d.year, number: d[id]/8, sum: +d.sum}; }) : list[0].map(function(d) {
               return {language: "AmericanEnglish", year: d.year, number:d[id], sum: +d.sum};
-          }))
+          })),
+          democracy: 38131,
+          liberty: 62626,
+          justice: 83210,
+          equality: 50127,
+          rights: 123266,
+          election: 50707,
+          citizen: 60464,
+          protests: 30176
         }
     });
     console.log(words_usEng.values);
@@ -463,7 +506,15 @@ d3.queue()
           values: (id === "total" ? list[1].map(function(d) {
                 return {language: "Chinese", year: d.year, number: d[id]/8, sum: +d.sum}; }) : list[1].map(function(d) {
               return {language: "Chinese", year: d.year, number:d[id], sum: +d.sum};
-          }))
+          })),
+          democracy: 8853,
+          liberty: 10217,
+          justice: 5785,
+          equality: 5378,
+          rights: 8455,
+          election: 5872,
+          citizen: 5695,
+          protests: 3891
         }
     });
     var words_heb = list[2].columns.slice(1,10).map(function(id) {
@@ -473,7 +524,15 @@ d3.queue()
           values: (id === "total" ? list[2].map(function(d) {
                 return {language: "Hebrew", year: d.year, number: d[id]/8, sum: +d.sum}; }) : list[2].map(function(d) {
               return {language: "Hebrew", year: d.year, number:d[id], sum: +d.sum};
-          }))
+          })),
+          democracy: 630,
+          liberty: 2021,
+          justice: 2798,
+          equality: 1163,
+          rights: 2605,
+          election: 1248,
+          citizen: 1497,
+          protests: 501
         }
     });
     var words_rus = list[3].columns.slice(1,10).map(function(id) {
@@ -483,7 +542,15 @@ d3.queue()
           values: (id === "total" ? list[3].map(function(d) {
                 return {language: "Russian", year: d.year, number: d[id]/8, sum: +d.sum}; }) : list[3].map(function(d) {
               return {language: "Russian", year: d.year, number:d[id], sum: +d.sum};
-          }))
+          })),
+          democracy: 1735,
+          liberty: 12047,
+          justice: 11870,
+          equality: 9131,
+          rights: 22706,
+          election: 6277,
+          citizen: 7254,
+          protests: 7761
         }
     });
     var words_spa = list[4].columns.slice(1,10).map(function(id) {
@@ -493,7 +560,15 @@ d3.queue()
           values: (id === "total" ? list[4].map(function(d) {
                 return {language: "Spanish", year: d.year, number: d[id]/8, sum: +d.sum}; }) : list[4].map(function(d) {
               return {language: "Spanish", year: d.year, number:d[id], sum: +d.sum};
-          }))
+          })),
+          democracy: 16707,
+          liberty: 14000,
+          justice: 211,
+          equality: 20606,
+          rights: 29628,
+          election: 23942,
+          citizen: 19138,
+          protests: 17607
         }
     });
     var list_lang = [words_usEng, words_chi, words_heb, words_rus, words_spa];
