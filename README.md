@@ -2,9 +2,19 @@ People's attention to democracy
 ==================
 
 
-## To View the page
+## To View the visualization
 
 [Pages Link](https://xinghom.github.io/peoplesAttentionInDemocracy/)
+
+
+--------------------------
+
+## Uncompleted Parts and Features
+
+- Tooltips with detailed info
+- Data selection and display with side bar (stack bar)
+- Others
+
 
 ## getStat Usage:
 
